@@ -32,3 +32,4 @@ su -sonar
 #sh /opt/sonarqube/bin/linux-x86-64/sonar.sh start
 #<browser -Ip : Port nUmber :9000
 #echo "user=admin & password=admin"
+#su - sonar -c "/opt/sonarqube/bin/linux-x86-64/sonar.sh start"
