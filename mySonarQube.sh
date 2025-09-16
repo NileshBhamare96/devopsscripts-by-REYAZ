@@ -1,5 +1,4 @@
-#!/bin/bash
-set -e   # exit if any command fails
+#! /bin/bash
 
 # Go to /opt
 cd /opt/
@@ -8,8 +7,7 @@ cd /opt/
 wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.6.50800.zip
 unzip sonarqube-8.9.6.50800.zip
 
-# rename
-mv sonarqube-8.9.6.50800 sonarqube 
+
 
 # Install Java 17 (Amazon Corretto)
 sudo rpm --import https://yum.corretto.aws/corretto.key
@@ -17,19 +15,17 @@ sudo curl -Lo /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.r
 sudo yum install -y java-17-amazon-corretto
 
 # Create sonar user
-useradd sonar || true   # skip if already exists
+useradd sonar
 
 # Change ownership of SonarQube directory
-sudo chown -R sonar:sonar /opt/sonarqube
+chown sonar:sonar sonarqube-8.9.6.50800 -R
+chmod 777 sonarqube-8.9.6.50800 -R
 
-# Optional: restrict permissions for security (avoid 777)
-sudo chmod -R 755 /opt/sonarqube
 
 # switch to user : sonar
-su -sonar
 
+su - sonar
 # use the below command manually after installation
-#sh /opt/sonarqube/bin/linux-x86-64/sonar.sh start
-#<browser -Ip : Port nUmber :9000
+#sh /opt/sonarqube-8.9.6.50800/bin/linux-x86-64/sonar.sh start
 #echo "user=admin & password=admin"
-#su - sonar -c "/opt/sonarqube/bin/linux-x86-64/sonar.sh start"
+
