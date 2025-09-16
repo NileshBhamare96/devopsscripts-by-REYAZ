@@ -27,5 +27,6 @@ chmod 777 sonarqube-8.9.6.50800 -R
 su - sonar
 # use the below command manually after installation
 #sh /opt/sonarqube-8.9.6.50800/bin/linux-x86-64/sonar.sh start
+#open broweser : PUBLIC_IP:9000
 #echo "user=admin & password=admin"
 
