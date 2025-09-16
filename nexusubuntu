@@ -7,17 +7,16 @@ apt install openjdk-17-jdk openjdk-17-jre -y
 
 ##Download the SonaType Nexus on Ubuntu using wget
 cd /opt 
-sudo wget https://download.sonatype.com/nexus/3/latest-unix.tar.gz   
-
-
+sudo wget https://download.sonatype.com/nexus/3/nexus-3.84.0-03-linux-x86_64.tar.gz
+   
 ##Extract the Nexus repository setup in /opt directory
-tar -zxvf latest-unix.tar.gz     
+tar -xvzf nexus-3.84.0-03-linux-x86_64.tar.gz
 
 ##Rename the extracted Nexus setup folder to nexus
-sudo mv /opt/nexus-3.77.0-08/ /opt/nexus
+sudo mv nexus-3.84.0-03 nexus
 
 ##As security practice, not to run nexus service using root user, so lets create new user named nexus to run nexus service
-sudo adduser nexus   --> give password
+sudo adduser nexus   --> give password & then enter...enetr....
 
 
 ##To set no password for nexus user open the visudo file in ubuntu
@@ -26,13 +25,20 @@ sudo visudo
 ##Add below line into it , save and exit
 nexus ALL=(ALL) NOPASSWD: ALL
 
+# This fixes CVE-2005-4890 and possibly breaks some versions of kdesu
+# (#1011624, https://bugs.kde.org/show_bug.cgi?id=452532)
+#Defaults        use_pty
+#nexus ALL=(ALL) NOPASSWD: ALL
+
+#how to save =>   ====> ctrl O + enetr then ctrl +X
+
 ##Give permission to nexus files and nexus directory to nexus user
 sudo chown -R nexus:nexus /opt/nexus
 sudo chown -R nexus:nexus /opt/sonatype-work        
 
 ##To run nexus as service at boot time, open /opt/nexus/bin/nexus.rc file, uncomment it and add nexus user as shown below
 sudo nano /opt/nexus/bin/nexus.rc
-run_as_user="nexus"   
+run_as_user="nexus"   ====> ctrl O + enetr then ctrl + X
 
 
 ##To Increase the nexus JVM heap size, you can modify the size as shown below
@@ -56,7 +62,6 @@ vi /opt/nexus/bin/nexus.vmoptions
 
 ##To run nexus as service using Systemd
 sudo vi /etc/systemd/system/nexus.service
-
 
 [Unit]
 Description=nexus service
