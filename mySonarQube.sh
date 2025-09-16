@@ -27,4 +27,5 @@ sudo chmod -R 755 /opt/sonarqube
 
 # use the below command manually after installation
 #sh /opt/sonarqube-8.9.6.50800/bin/linux-x86-64/sonar.sh start
+#<browser -Ip : Port nUmber :9000
 #echo "user=admin & password=admin"
