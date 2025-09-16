@@ -2,8 +2,16 @@
 cd /opt/
 wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.6.50800.zip
 unzip sonarqube-8.9.6.50800.zip
-sudo amazon-linux-extras enable corretto17
-sudo yum install java-17-amazon-corretto -y
+
+# Import the GPG key
+sudo rpm --import https://yum.corretto.aws/corretto.key
+
+# Add the Corretto repo
+sudo curl -Lo /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo
+
+# Install Java 17
+sudo yum install -y java-17-amazon-corretto
+
 useradd sonar
 chown sonar:sonar sonarqube-8.9.6.50800 -R
 chmod 777 sonarqube-8.9.6.50800 -R
