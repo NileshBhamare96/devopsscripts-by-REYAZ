@@ -28,4 +28,5 @@ sudo chmod -R 755 /opt/sonarqube-8.9.6.50800
 
 echo "Installation done. Switch to sonar user and start SonarQube:"
 echo "su - sonar"
-echo "/opt/sonarqube-8.9.6.50800/bin/linux-x86-64/sonar.sh start"
+#sh /opt/sonarqube/bin/linux-x86-64/sonar.sh start
+#echo "user=admin & password=admin"
