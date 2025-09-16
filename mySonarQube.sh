@@ -25,7 +25,10 @@ sudo chown -R sonar:sonar /opt/sonarqube
 # Optional: restrict permissions for security (avoid 777)
 sudo chmod -R 755 /opt/sonarqube
 
+# switch to user : sonar
+su -sonar
+
 # use the below command manually after installation
-#sh /opt/sonarqube-8.9.6.50800/bin/linux-x86-64/sonar.sh start
+#sh /opt/sonarqube/bin/linux-x86-64/sonar.sh start
 #<browser -Ip : Port nUmber :9000
 #echo "user=admin & password=admin"
