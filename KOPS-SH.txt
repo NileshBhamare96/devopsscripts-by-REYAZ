@@ -13,6 +13,7 @@
 ------------------------------------------------------------
 
 Create AMAZON LINUX 2 => EC2 Instancet3. micro  => 038896afdd7b6a879
+ADD IAM ROLE : Trusted Entity => EC2  and Permission => Administration Access OR S3 , EC2
 
 ---------------------------------------
 Step 1 : Update PATH 
