@@ -1,52 +1,114 @@
-Launch Amazon Linux 2023 , t2.micro
+============================================================
+                        KOPS SETUP
+============================================================
 
-Attach a IAM ROLE TE=EC2, Permisions = admin
+1. Launch Amazon Linux 2 EC2 instance with t2.micro
+2. Make sure AWS CLI is installed
+3. Attach an IAM Role with Admin permissions
+4. Install kubectl and kops
 
-vi .bashrc
+
+------------------------------------------------------------
+                      INSTALLATION
+------------------------------------------------------------
+
+Create AMAZON LINUX 2 => EC2 Instancet3. micro  => 038896afdd7b6a879
+ADD IAM ROLE : Trusted Entity => EC2  and Permission => Administration Access OR S3 , EC2
+
+---------------------------------------
+Step 1 : Update PATH 
+---------------------------------------
+(only needed in Amazon Linux, not Ubuntu)
+Appends /usr/local/bin/ to the system's $PATH so binaries can run globally
+
+vi ~/.bashrc
 export PATH=$PATH:/usr/local/bin/
 
+:wq
 
-source .bashrc
+source ~/.bashrc
 
-ssh-keygen
 
-cp /root/.ssh/id_rsa.pub my-keypair.pub
+---------------------------------------
+Step 2 : kop.sh and Exceute it 
 
-chmod 777 my-keypair.pub
+vi kops.sh ===> sh.kops.sh
+---------------------------------------
 
-vi kops.sh
 
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-wget https://github.com/kubernetes/kops/releases/download/v1.32.0/kops-linux-amd64
+#! /bin/bash
+# Download latest kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+# Download latest kops (change version if needed)
+wget https://github.com/kubernetes/kops/releases/download/v1.33.1/kops-linux-amd64
+
 chmod +x kops-linux-amd64 kubectl
-mv kubectl /usr/local/bin/kubectl
-mv kops-linux-amd64 /usr/local/bin/kops
-aws s3api create-bucket --bucket reyaz-kops-testbkt1433.k8s.local --region ap-south-1 --create-bucket-configuration LocationConstraint=ap-south-1
-aws s3api put-bucket-versioning --bucket reyaz-kops-testbkt1433.k8s.local --region ap-south-1 --versioning-configuration Status=Enabled
-export KOPS_STATE_STORE=s3://reyaz-kops-testbkt1433.k8s.local
-kops create cluster --name=reyaz.k8s.local --zones=ap-south-1a --control-plane-count=1 --control-plane-size=t3.medium --node-count=2 --node-size=t3.small --node-volume-size=20 --control-plane-volume-size=20 --ssh-public-key=my-keypair.pub --image=ami-02d26659fd82cf299 --networking=calico
-kops update cluster --name reyaz.k8s.local --yes --admin
+sudo mv kubectl /usr/local/bin/kubectl
+sudo mv kops-linux-amd64 /usr/local/bin/kops
+
+# Create S3 bucket for kops state
+aws s3api create-bucket \
+    --bucket reyaz-kops-testbkt666.k8s.local \
+    --region ap-south-1 \
+    --create-bucket-configuration LocationConstraint=ap-south-1
+
+aws s3api put-bucket-versioning \
+    --bucket reyaz-kops-testbkt666.k8s.local \
+    --region ap-south-1 \
+    --versioning-configuration Status=Enabled
+
+export KOPS_STATE_STORE=s3://reyaz-kops-testbkt666.k8s.local
+
+# Create cluster
+kops create cluster \
+    --name reyaz.k8s.local \
+    --zones ap-south-1a \
+    --master-count=1 \
+    --master-size c7i-flex.large \
+    --node-count=2 \
+    --node-size t3.micro
+
+# Apply config
+kops update cluster \
+    --name reyaz.k8s.local \
+    --yes \
+    --admin
 
 
-wq!
 
-export KOPS_STATE_STORE=s3://reyaz-kops-testbkt1433.k8s.local
-kops validate cluster --wait 10m
+---------------------------------------
+Step 3 : Export environment variables
+---------------------------------------
 
-
--- kops get cluster
-
--- kubectl get nodes/no
-
--- kubectl get nodes -o wide
-
-Suggestions:
- * list clusters with: kops get cluster
- * edit this cluster with: kops edit cluster reyaz.k8s.local
- * edit your node instance group: kops edit ig --name=reyaz.k8s.local nodes-ap-south-1a
- * edit your control-plane instance group: kops edit ig --name=reyaz.k8s.local control-plane-ap-south-1a
+export KOPS_STATE_STORE=s3://reyaz-kops-testbkt666.k8s.local
 
 
+------------------------------------------------------
+Step 4 : Validate cluster health (wait up to 10 min)
+         Ensures all nodes and pods are ready
+-----------------------------------------------------
+
+kops validate cluster --name reyaz.k8s.local --wait 10m
 
 
-kops delete cluster --name reyaz.k8s.local --yes
+============================================================
+FUTURE REFERENCE (SOME USEFUL COMMANDS)
+============================================================
+kops get cluster
+kubectl get nodes -o wide
+kops get ig --name=reyaz.k8s.local
+kops delete cluster --name reyaz.k8s.local --yes || true
+
+
+
+
+
+
+
+
+
+
+
+
+
