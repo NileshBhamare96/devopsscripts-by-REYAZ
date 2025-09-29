@@ -13,6 +13,7 @@
 ------------------------------------------------------------
 
 Create AMAZON LINUX 2 => EC2 Instancet3. micro  => 038896afdd7b6a879
+Amazon Linux 2 AMI (HVM), SSD Volume Type (64-bit x86) Operating System  ==> ami-0d4cbf33677f7d3c5
 ADD IAM ROLE : Trusted Entity => EC2  and Permission => Administration Access OR S3 , EC2
 
 ---------------------------------------
