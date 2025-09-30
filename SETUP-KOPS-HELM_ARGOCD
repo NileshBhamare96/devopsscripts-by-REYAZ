@@ -1,83 +1,54 @@
-🔹 How to use
+SETUP KOPS & INSTALL HELM
+------------------------------------------------------------
 
-1. Copy the script into a file, e.g., ===> vi setup-kops-argocd.sh
+yum install -y git
 
-2. Make it executable: ====> chmod +x setup-kops-argocd.sh
+// Download and install Helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 
+
+ls
+ 
+chmod 700 get_helm.sh 
+ 
+./get_helm.sh   or sh get_helm.sh
+
+// Verify version
+helm version  
+
+------------------------------------------------------------
+INSTALL ARGOCD USING HELM
+------------------------------------------------------------
+✅ Install ArgoCD Using Helm
+=================================
 
 
-3.  Run it ====> ./setup-kops-argocd.sh
-
-✅ This script does everything from Helm installation to ArgoCD deployment, including:
-
-Installing Helm
-
-Cleaning any leftover ArgoCD CRDs / namespace
-
-Creating the argocd namespace
-
-Installing ArgoCD via Helm
-
-Exposing it via LoadBalancer
-
-Waiting for pods to be ready
-
-Printing external URL and admin credentials
-==========================================================
-
-#!/bin/bash
-
-# ===============================
-# 1️⃣ Install Helm
-# ===============================
-echo "Downloading and installing Helm..."
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
-
-echo "Helm version:"
-helm version
-
-# ===============================
-# 2️⃣ Clean up old ArgoCD (if any)
-# ===============================
-echo "Cleaning up old ArgoCD resources..."
-kubectl delete crd applications.argoproj.io appprojects.argoproj.io argocds.argoproj.io applicationsets.argoproj.io --ignore-not-found
-kubectl delete ns argocd --force --grace-period=0 --ignore-not-found
-
-# ===============================
-# 3️⃣ Add Helm repo and update
-# ===============================
-echo "Adding ArgoCD Helm repo..."
+1️⃣ Add Helm repository
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 
-# ===============================
-# 4️⃣ Create ArgoCD namespace
-# ===============================
-echo "Creating namespace 'argocd'..."
-kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+2️⃣ Create ArgoCD namespace
+kubectl create namespace argocd
 
-# ===============================
-# 5️⃣ Install ArgoCD using Helm
-# ===============================
-echo "Installing ArgoCD Helm chart..."
+3️⃣ Install ArgoCD using Helm
 helm install argocd argo/argo-cd -n argocd
 
-# ===============================
-# 6️⃣ Wait for ArgoCD pods to be ready
-# ===============================
-echo "Waiting for ArgoCD pods to be ready..."
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s
+Notes:
+argocd        →  Helm release name
+-n argocd     →  namespace where ArgoCD will be installed
+argo/argo-cd  →  Helm chart from Argo repo
 
-# ===============================
-# 7️⃣ Expose ArgoCD server externally
-# ===============================
-echo "Exposing ArgoCD server via LoadBalancer..."
+
+4️⃣ Verify resources
+// Check resources created:- to list everything from namespace.
+kubectl get all -n argocd
+
+5️⃣ Expose ArgoCD server externally
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+kubectl get svc argocd-server -n argocd
 
-# ===============================
-# 8️⃣ Fetch external IP / DNS
-# ===============================
+
+7️⃣ Fetch external IP / DNS
+
 ARGOCD_URL=""
 while [ -z "$ARGOCD_URL" ]; do
   ARGOCD_URL=$(kubectl get svc argocd-server -n argocd -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
@@ -85,22 +56,28 @@ while [ -z "$ARGOCD_URL" ]; do
 done
 echo "ArgoCD URL: http://$ARGOCD_URL"
 
-# ===============================
-# 9️⃣ Get admin password
-# ===============================
-ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode)
-echo "ArgoCD Username: admin"
-echo "ArgoCD Password: $ARGOCD_PASS"
 
-# ===============================
-# 10️⃣ Done
-# ===============================
+8️⃣ Get the ArgoCD admin password
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode
+
+0️⃣ Done
+===============================
 echo "✅ ArgoCD is ready. Access it at: http://$ARGOCD_URL"
 
 
+------------------------------------------------------------
+CREATE NEW APP IN ARGOCD
+------------------------------------------------------------
 
 
 
+// verify namespace 
+kubectl config view 
+
+// Verify pods created
+kubectl get pods -n argocd 
 
 
+// Verify svc created
+kubectl get svc -n argocd  
 
