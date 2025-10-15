@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Step 1: Install Java 17 (Amazon Corretto)
-sudo dnf install java-17-amazon-corretto -y
+sudo yum install java-17-amazon-corretto -y
+
 
 # Step 2: Download Tomcat 11
 cd /home/ec2-user
