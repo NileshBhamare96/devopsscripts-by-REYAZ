@@ -1,4 +1,5 @@
-dnf install java-17-amazon-corretto -y
+# Step 1: Install Java 17 (Amazon Corretto)
+sudo yum install java-17-amazon-corretto -y
 wget https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.10/bin/apache-tomcat-11.0.10.tar.gz
 tar -zxvf apache-tomcat-11.0.10.tar.gz
 sed -i '56  a\<role rolename="manager-gui"/>' apache-tomcat-11.0.10/conf/tomcat-users.xml
