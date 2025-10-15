@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Switch to home directory
 cd /home/ec2-user
 
@@ -9,28 +7,14 @@ rm -rf apache-tomcat-9.* *.tar.gz
 # Step 1: Install Java 17 (Corretto)
 yum install java-17-amazon-corretto -y
 
-# Step 2: Download latest Tomcat 9 release
-TOMCAT_VERSION="9.0.111"
-wget https://dlcdn.apache.org/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
-
-# Step 3: Extract
-tar -zxvf apache-tomcat-$TOMCAT_VERSION.tar.gz
-
-# Step 4: Configure tomcat-users.xml safely
-cd apache-tomcat-$TOMCAT_VERSION/conf
-sed -i '/<\/tomcat-users>/d' tomcat-users.xml
-tee -a tomcat-users.xml > /dev/null <<EOL
-<role rolename="manager-gui"/>
-<role rolename="manager-script"/>
-<user username="tomcat" password="root123" roles="manager-gui,manager-script"/>
-</tomcat-users>
-EOL
-
-# Step 5: Remove IP restrictions from Manager app
-cd ../webapps/manager/META-INF
-sed -i '/RemoteAddrValve/d' context.xml
-
-# Step 6: Start Tomcat
-cd /home/ec2-user/apache-tomcat-$TOMCAT_VERSION/bin
-sh startup.sh
-
+dnf install java-17-amazon-corretto -y
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.111/bin/apache-tomcat-9.0.111.tar.gz
+tar -zxvf apache-tomcat-9.0.111.tar.gz
+sed -i '56  a\<role rolename="manager-gui"/>' apache-tomcat-9.0.111/conf/tomcat-users.xml
+sed -i '57  a\<role rolename="manager-script"/>' apache-tomcat-9.0.111/conf/tomcat-users.xml
+sed -i '58  a\<user username="tomcat" password="root123" roles="manager-gui, manager-script"/>' apache-tomcat-9.0.111/conf/tomcat-users.xml
+sed -i '59  a\</tomcat-users>' apache-tomcat-9.0.111/conf/tomcat-users.xml
+sed -i '56d' apache-tomcat-9.0.111/conf/tomcat-users.xml
+sed -i '21d' apache-tomcat-9.0.111/webapps/manager/META-INF/context.xml
+sed -i '22d' apache-tomcat-9.0.111/webapps/manager/META-INF/context.xml
+sh apache-tomcat-9.0.111/bin/startup.sh
