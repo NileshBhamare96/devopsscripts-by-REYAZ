@@ -4,12 +4,13 @@
 sudo yum install java-17-amazon-corretto -y
 
 
-# Step 2: Download Tomcat 11
+# Step 2: Download Tomcat
 cd /home/ec2-user
-wget https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.10/bin/apache-tomcat-11.0.10.tar.gz
+wget https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.11/bin/apache-tomcat-11.0.11.tar.gz
 
-# Step 3: Extract Tomcat
-tar -zxvf apache-tomcat-11.0.10.tar.gz
+# Step 3: Extract
+tar -zxvf apache-tomcat-11.0.11.tar.gz
+
 
 # Step 4: Configure tomcat-users.xml
 cd apache-tomcat-11.0.10/conf
