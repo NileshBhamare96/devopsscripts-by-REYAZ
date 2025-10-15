@@ -1,23 +1,30 @@
 #!/bin/bash
 
-# Step 1: Install Java
-sudo amazon-linux-extras install java-openjdk11 -y
+# Step 1: Install Java 17 (Amazon Corretto)
+sudo dnf install java-17-amazon-corretto -y
 
-# Step 2: Download Tomcat
+# Step 2: Download Tomcat 11
 cd /home/ec2-user
-wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.109/bin/apache-tomcat-9.0.109.tar.gz
+wget https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.10/bin/apache-tomcat-11.0.10.tar.gz
 
-# Step 3: Extract
-tar -zxvf apache-tomcat-9.0.109.tar.gz
+# Step 3: Extract Tomcat
+tar -zxvf apache-tomcat-11.0.10.tar.gz
 
 # Step 4: Configure tomcat-users.xml
-cd apache-tomcat-9.0.109/conf
-sudo sed -i '/<\/tomcat-users>/i\<role rolename="manager-gui"/>\n<role rolename="manager-script"/>\n<user username="tomcat" password="root123" roles="manager-gui,manager-script"/>' tomcat-users.xml
+cd apache-tomcat-11.0.10/conf
 
-# Step 5: Remove access restrictions from manager context.xml
-cd ../webapps/manager/META-INF
-sudo sed -i '21,22d' context.xml
+# Remove old closing tag and insert roles/users cleanly
+sudo sed -i '/<\/tomcat-users>/d' tomcat-users.xml
+sudo tee -a tomcat-users.xml > /dev/null <<EOL
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<user username="tomcat" password="root123" roles="manager-gui,manager-script"/>
+</tomcat-users>
+EOL
+
+# Step 5: Remove access restrictions from Manager app
+sudo sed -i '/Valve className="org.apache.catalina.valves.RemoteAddrValve"/d' ../webapps/manager/META-INF/context.xml
 
 # Step 6: Start Tomcat
-cd /home/ec2-user/apache-tomcat-9.0.109/bin
+cd /home/ec2-user/apache-tomcat-11.0.10/bin
 sh startup.sh
