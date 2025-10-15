@@ -3,19 +3,17 @@
 # Step 1: Install Java 17 (Amazon Corretto)
 sudo yum install java-17-amazon-corretto -y
 
-
-# Step 2: Download Tomcat
+# Step 2: Download Tomcat 9
 cd /home/ec2-user
-https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.111/bin/apache-tomcat-9.0.111.tar.gz
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.111/bin/apache-tomcat-9.0.111.tar.gz
 
 # Step 3: Extract
 tar -zxvf apache-tomcat-9.0.111.tar.gz
 
-
 # Step 4: Configure tomcat-users.xml
-cd apache-tomcat-11.0.10/conf
+cd apache-tomcat-9.0.111/conf
 
-# Remove old closing tag and insert roles/users cleanly
+# Remove old closing tag and add roles/users cleanly
 sudo sed -i '/<\/tomcat-users>/d' tomcat-users.xml
 sudo tee -a tomcat-users.xml > /dev/null <<EOL
 <role rolename="manager-gui"/>
@@ -28,5 +26,5 @@ EOL
 sudo sed -i '/Valve className="org.apache.catalina.valves.RemoteAddrValve"/d' ../webapps/manager/META-INF/context.xml
 
 # Step 6: Start Tomcat
-cd /home/ec2-user/apache-tomcat-11.0.10/bin
+cd /home/ec2-user/apache-tomcat-9.0.111/bin
 sh startup.sh
